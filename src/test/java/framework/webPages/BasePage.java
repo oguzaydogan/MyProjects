@@ -2,9 +2,7 @@ package framework.webPages;
 
 import com.google.common.base.Function;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.*;
 
 import stepdefinition.SharedSD;
 
@@ -15,6 +13,7 @@ import java.util.concurrent.BlockingDeque;
  * Created by mohammadmuntakim
  */
 public class BasePage {
+	WebDriverWait wait = new WebDriverWait(SharedSD.driver, 10);
 
 	// This is the most common wait function used in selenium
 	public static WebElement webAction(final By locator) {
@@ -64,8 +63,14 @@ public class BasePage {
 		//select element by visible text
 		selectMonth.selectByVisibleText(dropdownText);
 	}
-		public void scrollDown(int horizontal, int vertical) throws InterruptedException {
+
+	public void scrollDown(int horizontal, int vertical) throws InterruptedException {
 			JavascriptExecutor jsScrollBy = (JavascriptExecutor) SharedSD.driver;
 			jsScrollBy.executeScript("scrollBy("+horizontal + ","+ vertical +");");
 		}
+
+		public void waitElement (By locator) {
+			wait.until(ExpectedConditions.elementToBeClickable(locator));
+		}
+
 	}

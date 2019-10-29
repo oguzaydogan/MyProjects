@@ -47,7 +47,8 @@ public class DarkSkySD {
     }
 
     @Then ("^I verify current temp is not greater or less then temps from daily timeline$")
-    public void iVerifyCurrentTempFromDailyTl() { homePage.verifyCurrentTempFromDailyTl();
+    public void iVerifyCurrentTempFromDailyTl() {
+        Assert.assertTrue(homePage.isTempWithInRange(), "Temp is not within Range");
     }
 
     @And("^I expand todays timeline$")
@@ -57,37 +58,42 @@ public class DarkSkySD {
     @When("^I scroll down the page$")
     public void iScrollDownThePage() throws InterruptedException {
         homePage.scrollDown(0,900);
+        Thread.sleep(2000);
 
     }
 
     @And("^I got Todays min and max temperature$")
     public void iGotTodaysMinAndMaxTemperature() throws ParseException, InterruptedException {
-        homePage.getTodaysMinAndMaxTempValue();
+        homePage.getTodaysMinTempValue();
+        homePage.getTodaysMaxTempValue();
     }
 
     @And("^I got Todays min and max temperature displays$")
-    public void iGotTodaysMinAndMaxTemperatureDisplays() throws ParseException {
-        homePage.getTodayMinAndMaxTempDisplayValue();
+    public void iGotTodaysMinAndMaxTemperatureDisplays() throws ParseException, InterruptedException {
+        homePage.getTodayMinDisplayValue();
+        homePage.getTodayMaxDisplayValue();
     }
 
     @Then("^I verify lowest and highest temp is displayed correctly$")
-    public void iVerifyLowestAndHighestTempIsDisplayedCorrectly() throws ParseException {
-        homePage.verifyTodaysLowAndHighTemp();
+    public void verifyTodaysLowAndHighTemp() throws ParseException, InterruptedException {
+        Assert.assertEquals(homePage.getTodaysMinTempValue(),homePage.getTodayMinDisplayValue());
+        Assert.assertEquals(homePage.getTodaysMaxTempValue(), homePage.getTodayMaxDisplayValue());
     }
 
     @When("^I got hours list from Timeline$")
     public void iGotHoursListFromTimeline() {
-        homePage.getHoursListFromTimeLine();
+        homePage.currentHoursList();
     }
 
     @And("^I check current time and next two hours incremented$")
     public void iCheckCurrentTimeAndNextTwoHoursIncremented() {
-        homePage.getHoursListFromSystem();
+        homePage.timesList();
     }
 
     @Then("^I verify timeline is displayed with two hours incremented$")
     public void iVerifyTimelineIsDisplayedWithTwoHoursIncremented() {
-        homePage.verifyHoursTlAndSystem();
+        Assert.assertEquals(homePage.timesList(),homePage.currentHoursList());
+
     }
 
 }

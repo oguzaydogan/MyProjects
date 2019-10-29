@@ -1,10 +1,7 @@
 package framework.webPages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import stepdefinition.SharedSD;
 
@@ -18,8 +15,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class HomePageDarkSky extends BasePage {
-
-    WebDriverWait wait = new WebDriverWait(SharedSD.driver, 10);
 
     //Element locators
     private By darkSkyAPI = By.linkText("Dark Sky API");
@@ -36,16 +31,11 @@ public class HomePageDarkSky extends BasePage {
     private By hoursTimeLine = By.xpath("//div[@id='timeline']//div[@class='hours']/descendant::span//span");
 
     //Field Variables
-    private int minTempTodayInt = 0;
-    private int maxTempTodayInt = 0;
-    private int minTempTodayInt2 = 0;
-    private int maxTempTodayInt2 = 0;
     private int currentTempInt = 0;
 
     //Lists
     List<Integer> currentOptionsInt = new ArrayList<>();
-    List<String> currentHoursInTlStr = new ArrayList<>();
-    List<String> times = new ArrayList<String>();
+
 
     //Methods
     public void clickDarkSkyApi() {
@@ -78,65 +68,57 @@ public class HomePageDarkSky extends BasePage {
         currentTempInt = ((Number) NumberFormat.getInstance().parse(currentTempStr)).intValue();
     }
 
-    public void verifyCurrentTempFromDailyTl() {
+    public boolean isTempWithInRange() {
         int minListInt = Collections.min(currentOptionsInt);
         int maxListInt = Collections.max(currentOptionsInt);
-        if (currentTempInt <= maxListInt && currentTempInt >= minListInt) {
-            boolean isCurrentTempInRange = true;
-            Assert.assertTrue(isCurrentTempInRange, "Test passed");
-        }
+        return  currentTempInt <= maxListInt && currentTempInt >= minListInt;
     }
 
     public void clickTodayIcon() {
         try {
-            wait.until(ExpectedConditions.elementToBeClickable(todayIcon));
-            clickOn(todayIcon);
-
+           webAction(todayIcon).click();
         } catch (Exception e) {}
     }
 
-    public void scrollDown(int horizontal, int vertical) throws InterruptedException {
-        JavascriptExecutor jsScrollBy = (JavascriptExecutor) SharedSD.driver;
-        jsScrollBy.executeScript("scrollBy(" + horizontal + "," + vertical + ");");
-        Thread.sleep(2000);
-    }
-
-    public void getTodaysMinAndMaxTempValue() throws ParseException, InterruptedException {
+    public int getTodaysMinTempValue() throws ParseException {
         String minTempToday = SharedSD.driver.findElement(todayMinTemp).getText();
-        minTempTodayInt = ((Number) NumberFormat.getInstance().parse(minTempToday)).intValue();
-        System.out.println("Todays min Temp is : " + minTempTodayInt);
+        int minTempTodayInt = ((Number) NumberFormat.getInstance().parse(minTempToday)).intValue();
+        return minTempTodayInt;
+    }
+
+    public int getTodaysMaxTempValue() throws ParseException {
         String maxTempToday = SharedSD.driver.findElement(todayMaxTemp).getText();
-        maxTempTodayInt = ((Number) NumberFormat.getInstance().parse(maxTempToday)).intValue();
-        System.out.println("Todays max Temp is : " + maxTempTodayInt);
+        int maxTempTodayInt = ((Number) NumberFormat.getInstance().parse(maxTempToday)).intValue();
+        return maxTempTodayInt;
     }
 
-    public void getTodayMinAndMaxTempDisplayValue() throws ParseException {
-        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(todayMinTemp2));
+    public int getTodayMinDisplayValue() throws ParseException, InterruptedException {
+        waitElement(todayMinTemp2);
         String minTempToday2 = SharedSD.driver.findElement(todayMinTemp2).getText();
-        minTempTodayInt2 = ((Number) NumberFormat.getInstance().parse(minTempToday2)).intValue();
-        System.out.println("Todays min Temp 2 is : " + minTempTodayInt2);
-        WebElement element2 = wait.until(ExpectedConditions.elementToBeClickable(todayMaxTemp2));
+        int minTempTodayInt2 = ((Number) NumberFormat.getInstance().parse(minTempToday2)).intValue();
+        return minTempTodayInt2;
+    }
+
+        public int getTodayMaxDisplayValue() throws ParseException {
+        waitElement(todayMaxTemp2);
         String maxTempToday2 = SharedSD.driver.findElement(todayMaxTemp2).getText();
-        maxTempTodayInt2 = ((Number) NumberFormat.getInstance().parse(maxTempToday2)).intValue();
-        System.out.println("Todays max Temp 2 is : " + maxTempTodayInt2);
-
+        int maxTempTodayInt2 = ((Number) NumberFormat.getInstance().parse(maxTempToday2)).intValue();
+        return maxTempTodayInt2;
     }
 
-    public void verifyTodaysLowAndHighTemp() {
-        Assert.assertEquals(minTempTodayInt, minTempTodayInt2);
-        Assert.assertEquals(maxTempTodayInt, maxTempTodayInt2);
 
-    }
-
-    public void getHoursListFromTimeLine() {
+    public List<String> currentHoursList() {
+        List<String> currentHoursInTlStr = new ArrayList<>();
         List<WebElement> hoursInTimeLineList = SharedSD.driver.findElements(hoursTimeLine);
         for (WebElement hour : hoursInTimeLineList) {
             String hoursStr = hour.getText();
             currentHoursInTlStr.add(hoursStr);
         }
+        return currentHoursInTlStr;
     }
 
-    public void getHoursListFromSystem() {
+    public List<String> timesList() {
+        List<String> times = new ArrayList<String>();
         LocalDateTime dateStart = LocalDateTime.now();
         for (int i = 0; i < 24; i += 2) {
             LocalDateTime dateStop = dateStart.plusHours(i);
@@ -150,12 +132,7 @@ public class HomePageDarkSky extends BasePage {
                 iterator.set(s.toLowerCase());
                 times.set(0, "Now");
             }
-        }
-    }
-
-    public void verifyHoursTlAndSystem() {
-        Assert.assertEquals(currentHoursInTlStr,times);
-
+        }return times;
     }
 }
 
