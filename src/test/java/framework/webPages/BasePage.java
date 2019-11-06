@@ -57,11 +57,18 @@ public class BasePage {
 
 	public boolean isElementEnabled(By locator) { return webAction(locator).isEnabled(); }
 
-	public void selectFromDropdown(By locator, String dropdownText) {
-		WebElement month = webAction(locator);
-		Select selectMonth = new Select(month);
+	public void selectFromDropdownByValue(By locator, String dropdownText) {
+		WebElement element = webAction(locator);
+		Select select = new Select(element);
 		//select element by visible text
-		selectMonth.selectByVisibleText(dropdownText);
+		select.selectByValue(dropdownText);
+	}
+
+	public void selectFromDropdownByVisText(By locator, String dropdownText) {
+		WebElement element = webAction(locator);
+		Select select = new Select(element);
+		//select element by visible text
+		select.selectByVisibleText(dropdownText);
 	}
 
 	public void scrollDown(int horizontal, int vertical) throws InterruptedException {

@@ -20,8 +20,9 @@ public class SharedSD {
 				configReader.getChromeDriverPath());
 		driver = new ChromeDriver();
 
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		driver.get(configReader.getUrl());
+		driver.manage().window().maximize();
 	}
 
 	@After("@web")
